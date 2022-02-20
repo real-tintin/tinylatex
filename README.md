@@ -1,7 +1,7 @@
 # Tinylatex
 
 Tinylatex is a tiny portable (containerized) latex build environment. This is simply
-accomplished by glueing together the following existing tools:
+accomplished by using the following existing tools:
 
 * TeX Live Docker image [minidocks/texlive](https://github.com/minidocks/texlive)
 * TeX Live tools (such as ``tlmgr`` and ``pdflatex``)
