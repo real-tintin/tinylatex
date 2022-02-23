@@ -14,7 +14,7 @@ IMAGE_ROOT="/tinylatex"
 IMAGE_TEX_ROOT="${IMAGE_ROOT}/tex_root"
 
 TEX_ROOT=""
-BUILD_ARGS="--pdf"
+BUILD_ARGS=""
 
 EXP_POS_ARGS=1
 
@@ -23,7 +23,12 @@ usage() {
 
         Options:
         --build-live    use to build live and serve at localhost:8000
-        --filename      explicitly specify which tex file to build (useful if more than one)" 1>&2
+        --filename      explicitly specify which tex file to build (useful if more than one)
+        --clean-up      remove all temp files
+
+        --pdf           build pdf
+        --dvi           build dvi
+        --ps            build ps" 1>&2
 }
 
 exit_abnormal() {
@@ -43,12 +48,27 @@ while [[ $# -gt 0 ]]; do
     --build-live)
       BUILD_ARGS="${BUILD_ARGS} --live"
       shift # past argument
-      shift # past value
       ;;
     --filename)
       shift # past argument
       BUILD_ARGS="${BUILD_ARGS} --filename $1"
       ((EXP_POS_ARGS=EXP_POS_ARGS+1))
+      ;;
+    --clean-up)
+      BUILD_ARGS="${BUILD_ARGS} --clean-up"
+      shift # past argument
+      ;;
+    --pdf)
+      BUILD_ARGS="${BUILD_ARGS} --pdf"
+      shift # past argument
+      ;;
+    --dvi)
+      BUILD_ARGS="${BUILD_ARGS} --dvi"
+      shift # past argument
+      ;;
+    --ps)
+      BUILD_ARGS="${BUILD_ARGS} --ps"
+      shift # past argument
       ;;
     -*|--*)
       exit_abnormal
