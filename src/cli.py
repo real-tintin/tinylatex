@@ -8,7 +8,7 @@ PORT = 8000
 
 
 def main():
-    parser = ArgumentParser(description='The tinylatex cli')
+    parser = ArgumentParser(prog='tinylatex')
     subparsers = parser.add_subparsers(help='COMMAND help')
 
     parser_install = subparsers.add_parser('install', help='install help')
