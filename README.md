@@ -7,7 +7,7 @@ accomplished by using the following existing tools:
 * TeX Live tools (such as ``tlmgr``)
 
 ## Installation
-Simply clone this repository and add to your ``PATH``.
+Simply clone this repository and add */path/to/repo/bin* to your ``PATH``.
 
 ## Usage
 Example:

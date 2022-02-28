@@ -2,8 +2,12 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+PROJECT_ROOT="${SCRIPT_DIR}/../"
+
+DOCKERFILE=${PROJECT_ROOT}
+
 TMP_DIR_REL="./tmp"
-TMP_DIR_ABS="${SCRIPT_DIR}/tmp"
+TMP_DIR_ABS="${PROJECT_ROOT}/tmp"
 
 PACKAGES_FILENAME="packages.txt"
 
@@ -39,6 +43,14 @@ exit_abnormal() {
 windowsify_path() {
   in=$1
   echo ${in//\//\//}
+}
+
+is_windows() {
+  if [[ "$(uname -s)" =~ (CYGWIN*|MINGW32*|MSYS*|MINGW*) ]]; then
+    true
+  else
+    false
+  fi
 }
 
 POSITIONAL_ARGS=()
@@ -91,14 +103,14 @@ fi
 mkdir --parents ${TMP_DIR_ABS}
 cp ${PACKAGES_SRC} ${PACKAGES_DST_ABS}
 
-if [[ "$(uname -s)" =~ (CYGWIN*|MINGW32*|MSYS*|MINGW*) ]]; then
+if [ is_windows ]; then
   IMAGE_ROOT="$(windowsify_path ${IMAGE_ROOT})"
   TEX_ROOT="$(windowsify_path ${TEX_ROOT})"
   PACKAGES_DST_REL="$(windowsify_path ${PACKAGES_DST_REL})"
   IMAGE_TEX_ROOT="$(windowsify_path ${IMAGE_TEX_ROOT})"
 fi
 
-docker build ${SCRIPT_DIR} -t tinylatex \
+docker build ${DOCKERFILE} -t tinylatex \
   --build-arg IMAGE_ROOT=${IMAGE_ROOT} \
   --build-arg PACKAGES_PATH=${PACKAGES_DST_REL}
 
