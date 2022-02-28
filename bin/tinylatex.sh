@@ -19,6 +19,7 @@ IMAGE_TEX_ROOT="${IMAGE_ROOT}/tex_root"
 
 TEX_ROOT=""
 BUILD_ARGS=""
+PACKAGES_SRC=""
 
 EXP_POS_ARGS=1
 
@@ -29,6 +30,7 @@ usage() {
         --build-live    use to build live and serve at localhost:8000
         --filename      explicitly specify which tex file to build (useful if more than one)
         --clean-up      remove all temp files
+        --packages      path to packages file (default is TEX_ROOT/${PACKAGES_FILENAME})
 
         --pdf           build pdf
         --dvi           build dvi
@@ -70,6 +72,11 @@ while [[ $# -gt 0 ]]; do
       BUILD_ARGS="${BUILD_ARGS} --clean-up"
       shift # past argument
       ;;
+    --packages)
+      shift # past argument
+      PACKAGES_SRC=$1
+      ((EXP_POS_ARGS=EXP_POS_ARGS+1))
+      ;;
     --pdf)
       BUILD_ARGS="${BUILD_ARGS} --pdf"
       shift # past argument
@@ -97,11 +104,21 @@ if [ ${#POSITIONAL_ARGS[@]} -ne $EXP_POS_ARGS ]; then
   exit_abnormal
 else
   TEX_ROOT=$(realpath ${POSITIONAL_ARGS[0]})
+fi
+
+if [ -z ${PACKAGES_SRC} ]; then
   PACKAGES_SRC="${TEX_ROOT}/${PACKAGES_FILENAME}"
+else
+  PACKAGES_SRC=$(realpath ${PACKAGES_SRC})
 fi
 
 mkdir --parents ${TMP_DIR_ABS}
-cp ${PACKAGES_SRC} ${PACKAGES_DST_ABS}
+
+if [ -f ${PACKAGES_SRC} ]; then
+  cp ${PACKAGES_SRC} ${PACKAGES_DST_ABS}
+else
+  touch ${PACKAGES_DST_ABS}
+fi
 
 if [ is_windows ]; then
   IMAGE_ROOT="$(windowsify_path ${IMAGE_ROOT})"
