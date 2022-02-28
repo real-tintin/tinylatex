@@ -1,27 +1,19 @@
 import subprocess
-from enum import Enum
 from os import listdir, path
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 
-class OutFormat(Enum):
-    Pdf = '-pdf'
-    Dvi = '-dvi'
-    Ps = '-ps'
-
-
-def build(root: Path, filename: Optional[Path] = None, out_format: OutFormat = OutFormat.Pdf):
+def build(root: Path, filename: Optional[Path] = None, latexmk_opts: Optional[List[str]] = None):
     if filename is None:
         filepath = _find_first_tex_file(root)
     else:
         filepath = root / filename
 
-    subprocess.run(["latexmk", out_format.value, str(filepath)], cwd=str(root))
+    if latexmk_opts is None:
+        latexmk_opts = []
 
-
-def clean_up(root: Path):
-    subprocess.run(["latexmk", "-c"], cwd=str(root))
+    subprocess.run(["latexmk", *latexmk_opts, str(filepath)], cwd=str(root))
 
 
 def install_pkg_from_file(path: Path):

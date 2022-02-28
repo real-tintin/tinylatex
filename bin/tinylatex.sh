@@ -24,17 +24,15 @@ PACKAGES_SRC=""
 EXP_POS_ARGS=1
 
 usage() {
-  echo "Usage: $0 TEX_ROOT [OPTIONS]
+  echo "Usage: tinylatex.sh TEX_ROOT [OPTIONS]
+
+        Portable latex build environment
 
         Options:
-        --build-live    use to build live and serve at localhost:8000
-        --filename      explicitly specify which tex file to build (useful if more than one)
-        --clean-up      remove all temp files
-        --packages      path to packages file (default is TEX_ROOT/${PACKAGES_FILENAME})
-
-        --pdf           build pdf
-        --dvi           build dvi
-        --ps            build ps" 1>&2
+        --filename              explicitly specify tex file to build (useful if more than one)
+        --packages              path to packages file (default is TEX_ROOT/${PACKAGES_FILENAME})
+        --build-live            use to build live and serve at localhost:8000
+        --latexmk-opt=<option>  arbitrary latexmk option (can be used use multiple times)" 1>&2
 }
 
 exit_abnormal() {
@@ -68,25 +66,13 @@ while [[ $# -gt 0 ]]; do
       BUILD_ARGS="${BUILD_ARGS} --filename $1"
       ((EXP_POS_ARGS=EXP_POS_ARGS+1))
       ;;
-    --clean-up)
-      BUILD_ARGS="${BUILD_ARGS} --clean-up"
-      shift # past argument
-      ;;
     --packages)
       shift # past argument
       PACKAGES_SRC=$1
       ((EXP_POS_ARGS=EXP_POS_ARGS+1))
       ;;
-    --pdf)
-      BUILD_ARGS="${BUILD_ARGS} --pdf"
-      shift # past argument
-      ;;
-    --dvi)
-      BUILD_ARGS="${BUILD_ARGS} --dvi"
-      shift # past argument
-      ;;
-    --ps)
-      BUILD_ARGS="${BUILD_ARGS} --ps"
+    --latexmk-opt=*)
+      BUILD_ARGS="${BUILD_ARGS} $1"
       shift # past argument
       ;;
     -*|--*)

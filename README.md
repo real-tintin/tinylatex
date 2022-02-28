@@ -13,7 +13,7 @@ Simply clone this repository and add */path/to/repo/bin* to your ``PATH``.
 Example:
 
 ```shell
-tinylatex.sh /path/to/repo/example --pdf --filename main.tex
+tinylatex.sh /path/to/repo/example --filename main.tex
 ```
 
 Use ``tinylatex.sh --help`` to list all options.
