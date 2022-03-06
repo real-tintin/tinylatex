@@ -4,11 +4,11 @@ from pathlib import Path
 from typing import Optional, List
 
 
-def build(root: Path, filename: Optional[Path] = None, latexmk_opts: Optional[List[str]] = None):
-    if filename is None:
+def build(root: Path, main: Optional[Path] = None, latexmk_opts: Optional[List[str]] = None):
+    if main is None:
         filepath = _find_first_tex_file(root)
     else:
-        filepath = root / filename
+        filepath = root / main
 
     if latexmk_opts is None:
         latexmk_opts = []
@@ -16,10 +16,7 @@ def build(root: Path, filename: Optional[Path] = None, latexmk_opts: Optional[Li
     subprocess.run(["latexmk", *latexmk_opts, str(filepath)], cwd=str(root))
 
 
-def install_pkg_from_file(path: Path):
-    with open(path, 'r') as f:
-        packages = f.read().splitlines()
-
+def install_packages(packages: List[str]):
     subprocess.run(["tlmgr", "install", *packages])
 
 

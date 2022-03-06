@@ -9,17 +9,17 @@ DOCKERFILE=${PROJECT_ROOT}
 TMP_DIR_REL="./tmp"
 TMP_DIR_ABS="${PROJECT_ROOT}/tmp"
 
-PACKAGES_FILENAME="packages.txt"
+CONFIG_FILENAME="config.json"
 
-PACKAGES_DST_REL="${TMP_DIR_REL}/${PACKAGES_FILENAME}"
-PACKAGES_DST_ABS="${TMP_DIR_ABS}/${PACKAGES_FILENAME}"
+CONFIG_DST_REL="${TMP_DIR_REL}/${CONFIG_FILENAME}"
+CONFIG_DST_ABS="${TMP_DIR_ABS}/${CONFIG_FILENAME}"
 
 IMAGE_ROOT="/tinylatex"
 IMAGE_TEX_ROOT="${IMAGE_ROOT}/tex_root"
 
 TEX_ROOT=""
 BUILD_ARGS=""
-PACKAGES_SRC=""
+CONFIG_SRC=""
 
 EXP_POS_ARGS=1
 
@@ -29,8 +29,8 @@ usage() {
         Portable latex build environment
 
         Options:
-        --filename              explicitly specify tex file to build (useful if more than one)
-        --packages              path to packages file (default is TEX_ROOT/${PACKAGES_FILENAME})
+        --main                  explicitly specify main tex file to build (useful if more than one)
+        --config                path to config file (default search path TEX_ROOT/${CONFIG_FILENAME})
         --build-live            use to build live and serve at localhost:8000
         --latexmk-opt=<option>  arbitrary latexmk option (can be used use multiple times)" 1>&2
 }
@@ -61,14 +61,14 @@ while [[ $# -gt 0 ]]; do
       BUILD_ARGS="${BUILD_ARGS} --live"
       shift # past argument
       ;;
-    --filename)
+    --main)
       shift # past argument
-      BUILD_ARGS="${BUILD_ARGS} --filename $1"
+      BUILD_ARGS="${BUILD_ARGS} --main $1"
       ((EXP_POS_ARGS=EXP_POS_ARGS+1))
       ;;
-    --packages)
+    --config)
       shift # past argument
-      PACKAGES_SRC=$1
+      CONFIG_SRC=$1
       ((EXP_POS_ARGS=EXP_POS_ARGS+1))
       ;;
     --latexmk-opt=*)
@@ -92,30 +92,30 @@ else
   TEX_ROOT=$(realpath ${POSITIONAL_ARGS[0]})
 fi
 
-if [ -z ${PACKAGES_SRC} ]; then
-  PACKAGES_SRC="${TEX_ROOT}/${PACKAGES_FILENAME}"
+if [ -z ${CONFIG_SRC} ]; then
+  CONFIG_SRC="${TEX_ROOT}/${CONFIG_FILENAME}"
 else
-  PACKAGES_SRC=$(realpath ${PACKAGES_SRC})
+  CONFIG_SRC=$(realpath ${CONFIG_SRC})
 fi
 
 mkdir --parents ${TMP_DIR_ABS}
 
-if [ -f ${PACKAGES_SRC} ]; then
-  cp ${PACKAGES_SRC} ${PACKAGES_DST_ABS}
+if [ -f ${CONFIG_SRC} ]; then
+  cp ${CONFIG_SRC} ${CONFIG_DST_ABS}
 else
-  touch ${PACKAGES_DST_ABS}
+  touch ${CONFIG_DST_ABS}
 fi
 
 if [ is_windows ]; then
   IMAGE_ROOT="$(windowsify_path ${IMAGE_ROOT})"
   TEX_ROOT="$(windowsify_path ${TEX_ROOT})"
-  PACKAGES_DST_REL="$(windowsify_path ${PACKAGES_DST_REL})"
+  CONFIG_DST_REL="$(windowsify_path ${CONFIG_DST_REL})"
   IMAGE_TEX_ROOT="$(windowsify_path ${IMAGE_TEX_ROOT})"
 fi
 
 docker build ${DOCKERFILE} -t tinylatex \
   --build-arg IMAGE_ROOT=${IMAGE_ROOT} \
-  --build-arg PACKAGES_PATH=${PACKAGES_DST_REL}
+  --build-arg CONFIG_FROM=${CONFIG_DST_REL}
 
 rm -r ${TMP_DIR_ABS}
 

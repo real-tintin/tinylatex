@@ -1,6 +1,9 @@
 \documentclass{article}
 
 \usepackage{subfiles}
+\usepackage{fontspec}
+
+\newfontfamily\fontin{Fontin Regular}
 
 \title{A Tiny \LaTeX{} Article Template\thanks{To your mother}}
 \author{You}
@@ -12,5 +15,8 @@
 The Leibniz formula for $\pi$ is a series and is given by
 
 \subfile{equation}
+
+\vspace{2cm}
+\fontin This text is using the Fontin font.
 
 \end{document}

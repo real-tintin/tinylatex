@@ -13,11 +13,15 @@ Simply clone this repository and add */path/to/repo/bin* to your ``PATH``.
 Example:
 
 ```shell
-tinylatex.sh /path/to/repo/example --filename main.tex
+tinylatex.sh /path/to/repo/example --main main.tex --latexmk-opt=-pdflua
 ```
 
 Use ``tinylatex.sh --help`` to list all options.
 
-## Packages
-Besides the standard latex packages, one can install additional packages by adding them to
-a *packages.txt*, see example for details.
+## Config
+The build environment can be configured by adding a *config.json*. Current features:
+
+* Additional latex packages to install
+* Fonts to download and install
+
+See example for details.
