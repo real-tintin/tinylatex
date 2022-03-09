@@ -1,4 +1,4 @@
-FROM minidocks/texlive
+FROM minidocks/texlive:small
 
 ARG IMAGE_ROOT
 ARG CONFIG_FROM
@@ -12,8 +12,7 @@ RUN apk update
 RUN apk add --no-cache \
     python3 \
     py3-pip \
-    msttcorefonts-installer \
-    fontconfig
+    ghostscript
 
 RUN tlmgr update --self
 

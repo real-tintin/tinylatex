@@ -1,8 +1,7 @@
 {
    "packages": [
-       "subfiles",
-       "fontspec"
-    ],
+      "subfiles"
+   ],
    "fonts":[
         {"name": "Fontin-Regular", "url":"https://www.wfonts.com/download/data/2015/03/10/fontin/Fontin-Regular.otf"},
         {"name": "Fontin-Bold", "url":"https://www.wfonts.com/download/data/2015/03/10/fontin/Fontin-Bold.otf"},
