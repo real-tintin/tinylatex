@@ -31,7 +31,7 @@ usage() {
         Options:
         --main                  explicitly specify main tex file to build (useful if more than one)
         --config                path to config file (default search path TEX_ROOT/${CONFIG_FILENAME})
-        --build-live            use to build live and serve at localhost:8000
+        --live-pdf              use to build live pdf and serve at localhost:8000
         --latexmk-opt=<option>  arbitrary latexmk option (can be used use multiple times)" 1>&2
 }
 
@@ -57,10 +57,6 @@ POSITIONAL_ARGS=()
 
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --build-live)
-      BUILD_ARGS="${BUILD_ARGS} --live"
-      shift # past argument
-      ;;
     --main)
       shift # past argument
       BUILD_ARGS="${BUILD_ARGS} --main $1"
@@ -70,6 +66,10 @@ while [[ $# -gt 0 ]]; do
       shift # past argument
       CONFIG_SRC=$1
       ((EXP_POS_ARGS=EXP_POS_ARGS+1))
+      ;;
+    --live-pdf)
+      BUILD_ARGS="${BUILD_ARGS} --live-pdf"
+      shift # past argument
       ;;
     --latexmk-opt=*)
       BUILD_ARGS="${BUILD_ARGS} $1"
@@ -119,7 +119,10 @@ docker build ${DOCKERFILE} -t tinylatex \
 
 rm -r ${TMP_DIR_ABS}
 
-docker run -v ${TEX_ROOT}:${IMAGE_TEX_ROOT} tinylatex \
+docker run -it \
+  -v ${TEX_ROOT}:${IMAGE_TEX_ROOT} \
+  -p 8000:8000 \
+  tinylatex \
   python3 cli.py build ${IMAGE_TEX_ROOT} ${BUILD_ARGS}
 
 exit 0

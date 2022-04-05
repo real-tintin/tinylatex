@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+
+    <script type="text/javascript">
+        const REFRESH_RATE_MS = 1000;
+
+        var pdfVersionOld = -1;
+
+        setInterval(refreshIfPdfUpdated, REFRESH_RATE_MS);
+
+        function refreshIfPdfUpdated()
+        {
+            if (isPdfUpdated())
+            {
+                refreshPdf();
+            }
+        }
+
+        function refreshPdf()
+        {
+            var d = document.getElementById("pdf");
+            d.innerHTML = '<embed src="{{pdf_path}}" type="application/pdf" style="min-height:100vh;width:100%">';
+        }
+
+        function isPdfUpdated()
+        {
+            var pdfVersionNew = getPdfVersion();
+            var isUpdated = pdfVersionNew > pdfVersionOld;
+
+            pdfVersionOld = pdfVersionNew;
+
+            return isUpdated;
+        }
+
+        function getPdfVersion()
+        {
+            var request = new XMLHttpRequest();
+
+            request.open("GET", 'pdf_version', false);
+            request.send(null);
+
+            if (request.status == 200)
+            {
+                return parseInt(request.responseText);
+            }
+            else
+            {
+                console.log("Invalid status code")
+                return 0;
+            }
+        }
+
+    </script>
+</head>
+
+<body>
+    <object id="pdf"></object>
+</body>
+
+</html>
