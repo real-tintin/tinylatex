@@ -1,4 +1,3 @@
-from abc import abstractmethod
 from os import path, listdir
 from pathlib import Path
 from typing import Optional, List
@@ -7,8 +6,11 @@ import latex
 
 
 class Builder:
-
     def __init__(self, root: Path, main: Optional[Path] = None, latexmk_opts: Optional[List[str]] = None):
+        """
+        Latex builder which builds in the provided root and using an optional
+        main (tex file) and latexmk build options/flags.
+        """
         self._root = root
         self._latexmk_opts = latexmk_opts
 
@@ -19,7 +21,6 @@ class Builder:
 
         self._version = 0
 
-    @abstractmethod
     def build(self):
         latex.build(tex_path=self._tex_path, latexmk_opts=self._latexmk_opts)
         self._version += 1
