@@ -6,6 +6,10 @@ accomplished by using the following existing tools:
 * TeX Live Docker image [minidocks/texlive](https://github.com/minidocks/texlive)
 * [TinyTex](https://yihui.org/tinytex/) (small LaTeX distribution based on TeX Live)
 
+## Prerequisite
+* Docker
+* Linux/Windows (tested)
+
 ## Installation
 Simply clone this repository and add */path/to/repo/bin* to your ``PATH``.
 
