@@ -19,17 +19,17 @@ RUN apt-get install -y \
     wget \
     fontconfig
 
-# Install & setup tinytex (https://yihui.org/tinytex/)
+# Install tinytex (https://yihui.org/tinytex/)
 RUN wget -qO- "https://yihui.org/tinytex/install-bin-unix.sh" | sh
 ENV PATH="${PATH}:/root/bin"
-RUN tlmgr update --self
 
-# Setup python tool
+# Copy and install python tool
 COPY ./src ${IMAGE_ROOT}
 RUN pip install -r requirements.txt
 
 # Setup env from config
 COPY ${CONFIG_FROM} ${CONFIG_TO}
+RUN tlmgr update --self
 RUN python3 cli.py config ${CONFIG_TO}
 
 # Re-build the font cache

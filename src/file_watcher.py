@@ -35,9 +35,13 @@ class FileWatcher:
         self._run = True
         self._thread.start()
 
+        logger.info("Started in thread")
+
     def stop(self):
         self._run = False
         self._thread.join()
+
+        logger.info("Stopped in thread")
 
     def _run_in_thread(self):
         while self._run:
