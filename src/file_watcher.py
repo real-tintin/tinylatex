@@ -31,9 +31,6 @@ class FileWatcher:
 
         self._timed_content_old = {}
 
-    def __del__(self):
-        self.stop()
-
     def start(self):
         self._run = True
         self._thread.start()

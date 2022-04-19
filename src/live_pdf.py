@@ -7,7 +7,7 @@ from waitress import serve
 
 URL_PDF_ROOT = '/does_not_really_exist'
 
-logger = logging.getLogger('waitress')
+logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
 cache = {}
@@ -37,4 +37,6 @@ def launch(host: str, port: int, pdf_path: Path, get_version_cb: Callable):
     cache['pdf_path_url'] = URL_PDF_ROOT + '/' + pdf_path.name
     cache['get_version_cb'] = get_version_cb
 
-    serve(app, host=host, port=port)
+    serve(app, host=host, port=port)  # blocking
+
+    logger.info("Shutting down")

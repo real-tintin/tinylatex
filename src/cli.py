@@ -56,6 +56,8 @@ def _cb_parse_build_args(args: Namespace):
                         pdf_path=builder.get_tex_path().with_suffix('.pdf'),  # Note, pdf output is assumed
                         get_version_cb=builder.get_version)
 
+        watcher.stop()  # live_pdf.launch is blocking
+
     else:
         builder.build()
 
