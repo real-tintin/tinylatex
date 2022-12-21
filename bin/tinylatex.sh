@@ -46,11 +46,14 @@ windowsify_path() {
 }
 
 is_windows() {
-  if [[ "$(uname -s)" =~ (CYGWIN*|MINGW32*|MSYS*|MINGW*) ]]; then
-    true
-  else
-    false
-  fi
+  case "$(uname -sr)" in
+    CYGWIN*|MINGW*|MINGW32*|MSYS*)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
 }
 
 POSITIONAL_ARGS=()
@@ -106,7 +109,7 @@ else
   touch ${CONFIG_DST_ABS}
 fi
 
-if [ is_windows ]; then
+if is_windows ]; then
   IMAGE_ROOT="$(windowsify_path ${IMAGE_ROOT})"
   TEX_ROOT="$(windowsify_path ${TEX_ROOT})"
   CONFIG_DST_REL="$(windowsify_path ${CONFIG_DST_REL})"
