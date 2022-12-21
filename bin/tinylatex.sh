@@ -98,7 +98,7 @@ else
   CONFIG_SRC=$(realpath ${CONFIG_SRC})
 fi
 
-mkdir --parents ${TMP_DIR_ABS}
+mkdir -p ${TMP_DIR_ABS}
 
 if [ -f ${CONFIG_SRC} ]; then
   cp ${CONFIG_SRC} ${CONFIG_DST_ABS}

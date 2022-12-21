@@ -8,7 +8,6 @@ accomplished by using the following existing tools:
 
 ## Prerequisite
 * Docker
-* Linux/Windows (tested)
 
 ## Installation
 Simply clone this repository and add */path/to/repo/bin* to your ``PATH``.
