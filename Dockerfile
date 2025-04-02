@@ -4,8 +4,8 @@ FROM debian:bullseye
 ARG IMAGE_ROOT
 ARG CONFIG_FROM
 
-ENV CONFIG_TO "${IMAGE_ROOT}/config.json"
-ENV FONT_ROOT "/root/.fonts"
+ENV CONFIG_TO="${IMAGE_ROOT}/config.json"
+ENV FONT_ROOT="/root/.fonts"
 
 WORKDIR ${IMAGE_ROOT}
 

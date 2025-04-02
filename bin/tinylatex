@@ -24,7 +24,7 @@ CONFIG_SRC=""
 EXP_POS_ARGS=1
 
 usage() {
-  echo "Usage: tinylatex.sh TEX_ROOT [OPTIONS]
+  echo "Usage: tinylatex TEX_ROOT [OPTIONS]
 
         Portable latex build environment
 
