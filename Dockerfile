@@ -29,6 +29,7 @@ RUN pip install -r requirements.txt
 
 # Setup env from config
 COPY ${CONFIG_FROM} ${CONFIG_TO}
+RUN tlmgr option repository http://mirror.ctan.org/systems/texlive/tlnet
 RUN tlmgr update --self
 RUN python3 cli.py config ${CONFIG_TO}
 
