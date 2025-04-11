@@ -2,7 +2,7 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-PROJECT_ROOT="${SCRIPT_DIR}/../"
+PROJECT_ROOT="${SCRIPT_DIR}/.."
 
 DOCKERFILE=${PROJECT_ROOT}
 
@@ -18,10 +18,8 @@ IMAGE_ROOT="/tinylatex"
 IMAGE_TEX_ROOT="${IMAGE_ROOT}/tex_root"
 
 TEX_ROOT=""
-BUILD_ARGS=""
 CONFIG_SRC=""
-
-EXP_POS_ARGS=1
+BUILD_ARGS=()
 
 usage() {
   echo "Usage: tinylatex TEX_ROOT [OPTIONS]
@@ -42,12 +40,12 @@ exit_abnormal() {
 
 windowsify_path() {
   in=$1
-  echo ${in//\//\//}
+  echo "${in//\//\//}"
 }
 
 is_windows() {
   case "$(uname -sr)" in
-    CYGWIN*|MINGW*|MINGW32*|MSYS*)
+    CYGWIN*|MINGW*|MSYS*)
       return 0
       ;;
     *)
@@ -56,76 +54,79 @@ is_windows() {
   esac
 }
 
-POSITIONAL_ARGS=()
+if [[ -z $1 ]]; then
+  echo "Error: TEX_ROOT is required"
+  exit_abnormal
+fi
+TEX_ROOT=$(realpath "$1")
+shift
 
 while [[ $# -gt 0 ]]; do
   case $1 in
     --main)
-      shift # past argument
-      BUILD_ARGS="${BUILD_ARGS} --main $1"
-      ((EXP_POS_ARGS=EXP_POS_ARGS+1))
+      shift
+      if [[ -z $1 ]]; then
+        echo "Error: --main requires a value"
+        exit_abnormal
+      fi
+      BUILD_ARGS+=("--main" "$1")
+      shift
       ;;
     --config)
-      shift # past argument
+      shift
+      if [[ -z $1 ]]; then
+        echo "Error: --config requires a value"
+        exit_abnormal
+      fi
       CONFIG_SRC=$1
-      ((EXP_POS_ARGS=EXP_POS_ARGS+1))
+      shift
       ;;
     --live-pdf)
-      BUILD_ARGS="${BUILD_ARGS} --live-pdf"
-      shift # past argument
+      BUILD_ARGS+=("--live-pdf")
+      shift
       ;;
     --latexmk-opt=*)
-      BUILD_ARGS="${BUILD_ARGS} $1"
-      shift # past argument
-      ;;
-    -*|--*)
-      exit_abnormal
-      exit 1
+      BUILD_ARGS+=("$1")
+      shift
       ;;
     *)
-      POSITIONAL_ARGS+=("$1") # save positional arg
-      shift # past argument
+      echo "Error: unknown option: $1"
+      exit_abnormal
       ;;
   esac
 done
 
-if [ ${#POSITIONAL_ARGS[@]} -ne $EXP_POS_ARGS ]; then
-  exit_abnormal
-else
-  TEX_ROOT=$(realpath ${POSITIONAL_ARGS[0]})
-fi
-
-if [ -z ${CONFIG_SRC} ]; then
+if [ -z "${CONFIG_SRC}" ]; then
   CONFIG_SRC="${TEX_ROOT}/${CONFIG_FILENAME}"
 else
-  CONFIG_SRC=$(realpath ${CONFIG_SRC})
+  CONFIG_SRC=$(realpath "${CONFIG_SRC}")
 fi
 
-mkdir -p ${TMP_DIR_ABS}
+mkdir -p "${TMP_DIR_ABS}"
 
-if [ -f ${CONFIG_SRC} ]; then
-  cp ${CONFIG_SRC} ${CONFIG_DST_ABS}
+if [ -f "${CONFIG_SRC}" ]; then
+  cp "${CONFIG_SRC}" "${CONFIG_DST_ABS}"
 else
-  touch ${CONFIG_DST_ABS}
+  touch "${CONFIG_DST_ABS}"
 fi
 
-if is_windows ]; then
-  IMAGE_ROOT="$(windowsify_path ${IMAGE_ROOT})"
-  TEX_ROOT="$(windowsify_path ${TEX_ROOT})"
-  CONFIG_DST_REL="$(windowsify_path ${CONFIG_DST_REL})"
-  IMAGE_TEX_ROOT="$(windowsify_path ${IMAGE_TEX_ROOT})"
+if is_windows; then
+  IMAGE_ROOT="$(windowsify_path "${IMAGE_ROOT}")"
+  TEX_ROOT="$(windowsify_path "${TEX_ROOT}")"
+  CONFIG_DST_REL="$(windowsify_path "${CONFIG_DST_REL}")"
+  IMAGE_TEX_ROOT="$(windowsify_path "${IMAGE_TEX_ROOT}")"
 fi
 
-docker build ${DOCKERFILE} -t tinylatex \
-  --build-arg IMAGE_ROOT=${IMAGE_ROOT} \
-  --build-arg CONFIG_FROM=${CONFIG_DST_REL}
+docker build "${DOCKERFILE}" -t tinylatex \
+  --build-arg IMAGE_ROOT="${IMAGE_ROOT}" \
+  --build-arg CONFIG_FROM="${CONFIG_DST_REL}"
 
-rm -r ${TMP_DIR_ABS}
+rm -r "${TMP_DIR_ABS}"
 
 docker run -it \
-  -v ${TEX_ROOT}:${IMAGE_TEX_ROOT} \
+  -v "${TEX_ROOT}":"${IMAGE_TEX_ROOT}" \
   -p 8000:8000 \
   tinylatex \
-  python3 cli.py build ${IMAGE_TEX_ROOT} ${BUILD_ARGS}
+  python3 cli.py build "${IMAGE_TEX_ROOT}" "${BUILD_ARGS[@]}"
 
 exit 0
